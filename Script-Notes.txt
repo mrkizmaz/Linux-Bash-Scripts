@@ -1,0 +1,162 @@
+			#### LINUX BASH SCRIPT NOTLARI ####
+		   --------------------------------------------
+		   
+$$$ Bash script neden yazılır?
+1. Admin kişilerin işlerini kolaylaştırır,
+2. Çalışanlara admin olmadığı zaman kolaylık sağlar ve 
+3. Ev kullanıcısı tüm kullanıcılara kolaylık sağlar.
+* Bash script vi, vim, gedit, vscode vb. ortamlarda yazılabilir.
+
+$$$ Bash scriptin temel kullanımı;
+> #! /bin/bash --> ana kalıp
+> Oluşturulan dosyaları executable yapmak için --> chmod +x dosya_ismi
+> Oluşturulan dosyalar /usr/bin içerisine atılırsa her dizinde çalıştırılır.
+ * Bunu yapmak icin: cd /usr, ls -lap
+	- bin/: user komutlarını barındırır
+	- sbin/: admin komutlarını barındırır.
+    sudo cp -p -r /home/ersel/Desktop/test.sh bin/
+    - dosyayı kontrol etmek icin: cd bin, ls -lap
+ * Bu sekilde her dizinde calıstırılır: test.sh, ('./' gerek yok)
+ 
+/////////////// DEGISKENLER \\\\\\\\\\\\\\\
+1) Sytem Variables: Isletim sisteminde hazır degiskenler
+2) User Variables: Kullanıcı tarafından olusturulan degiskenler
+
+* Sistem Degiskenleri:
+	echo $BASH
+	echo $BASH_VERSION
+	echo $HOME
+	echo $PWD
+* User Degiskenleri:
+	isim=Ersel # str degisken
+	sayi=22 # int degisken
+
+////////////// READ: dısardan (kullanıcıdan) deger alır \\\\\\\\\\\\\\\
+    Kullanımı;
+	echo "Ismininz: "
+	read isim [or isim2, isim3, ...]
+	echo "Ismim: $isim"
+	
+	* Degisken atamadan yazdırma;
+	echo "Isminizi giriniz: "
+	read
+	echo "Ismim $REPLY"
+	
+	* Dizi ayırma 
+	echo "Isimler: "
+	read -a isimler
+	echo "Isimler: ${isimler[0]}, ${isimler[1]}, ${isimler[2]}"
+	
+    - read -p [deger]: aynı satırda deger alır
+    - read -sp [deger]: sifreyi gizli kılar
+    - read -a [deger]: diziyi ayırmak icin kullanılır, a: arc
+
+////////////// ARGS (argümanlar): local degiskenler \\\\\\\\\\\\\\\
+    Kullanımı;
+    	> ./test.sh 1 2 3
+    	- echo $1 $2 $3 ... : dosyanın yanındaki degerleri yazdırır
+    	- echo $@ [or $*]: dosyanın yanındaki bütün degerleri yazdırır
+    	- echo $#: dosya yanında kac deger oldugunu söyler
+    	
+       * dizi=("$@") # dizide * kullanılmamalı
+         echo ${dizi[0]} "ve" ${dizi[3]} #0. eleman
+
+////////////// IF \\\\\\\\\\\\\\\
+    Kullanımı;
+	-  if [ kosul ]
+	   then
+	   	durum
+	   fi
+	   
+    # int karsılastırma
+      -eq / esit ise
+      -ne / esit degil ise
+      -gt / büyük ise
+      -ge / büyük veya esit ise
+      -lt / kücük ise
+      -le / kücük veya esit ise
+      if ["$a" -eq "$b"] --> örnek kullanım
+
+    * <, <=, >, >= : if(("$a" < "$b")) --> örnek kullanım
+
+    # string karsılastırma
+      =, ==, !=, <, > 
+      if[["$a" < "$b"]] --> (< or > kullanıldıgında)
+      if["$a" == "$b"] --> (=, ==, !=)
+
+    # and ve or operatörü
+      AND --> && (-a)
+      OR --> || (-o)
+
+////////////// ARITMETIK ISLEMLER \\\\\\\\\\\\\\\
+    - echo 1 + 1 --> output: '1+1'
+    - echo $(( 1+1 )) # cift parantez olmalı!
+    - carpma(*) isleminde hata verir. (asperiks): \* olarak kullanılmalı
+    - tek parantez yazmak icin; expr (aralarda bosluk olmalı!)
+    - echo $( expr $sayi1 + $sayi2 )
+
+   * float sayılarda islemler;
+     - echo "20.5+5" | bc
+     - bölmede virgüleden sonraki degerleri verir
+     - echo "scale=2; 20.5/5" | bc
+     - karekök alma, -l: library
+     - echo "scale=10; sqrt(5)" | bc -l
+     - küp alma,
+     - echo "scale=2; $sayi2^3" | bc -l
+
+////////////// DOSYA DOGRULAMA (File Check Operations) \\\\\\\\\\\\\\\
+* echo -e "...... : \c" --> aynı satırda kalmasını saglar
+
+ -e: dosya mevcut
+ -f: dosya mevcut ve regular file (okunabilir)
+ -s: dosya icerigi dolu mu
+ -d: klasör olup olmadıgı (directory)
+ -r: read
+ -w: write
+ -x: executable
+
+* dosya özelliklerini görmek icin: ls -lap
+* dosyaya özellik eklemek icin: chmod +r
+* dosyadan özellik cıkarmak icin: chmod -w
+
+# Dosya Icerisine Metin Ekleme
+  1. önce yazılabilirligini kontrol et
+  2. cat >> $dosyaismi
+
+////////////// CASE \\\\\\\\\\\\\\\
+    Kullanımı;
+    	case degisken in
+	    degiskenadi )
+               durum;;
+            degiskenadi )
+               durum;;
+        esac   
+
+////////////// DIZILER \\\\\\\\\\\\\\\
+    Kullanımı;
+	dizi=( 'a' 'b' 'c' )
+	- echo "${dizi[@]}" # tüm dizi elemanlarını gösterir
+	- echo "${dizi[2]}"
+	- echo "${!dizi[@]}" # dizi elemanlarının index sırasını gösterir.
+	- echo "${#dizi[@]}" # dizinin eleman sayısnı gösterir
+	- dizi[3]='d' # diziye eleman ekleme
+	- echo "${dizi[@]}"
+	- unset dizi[1] # eleman cıkarma
+	- echo "${dizi[@]}"
+	- echo "${!dizi[@]}"
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
