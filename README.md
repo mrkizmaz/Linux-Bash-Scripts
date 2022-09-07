@@ -5,7 +5,7 @@
 ### CONTENTS
 - [Bash Script Notes][bash_notes]: This file contains the basic script lines.
 - [Bash Exercises][bash_ex]: This file contains the practice steps.
-- [Test Scipts][bash_test]: This file contains the stages of testing the scripts.
+- [Test Scripts][bash_test]: This file contains the stages of testing the scripts.
 
 
 
